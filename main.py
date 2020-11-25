@@ -1,67 +1,101 @@
-#from pprint import pprint
-import json
-import requests
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import time
+from pprint import pprint
+from selenium.webdriver.support.ui import Select
+driver = webdriver.Chrome()
+"""
+driver.get('https://account.mail.ru/login')
+#elem = driver.find_element_by_class_name('ProvidersListItemIcon ProvidersListItemIconOther ProvidersListItemIconResponsive')
+#elem.send_keys(Keys.ENTER)
+elem = driver.find_elements_by_class_name('c0171')
 
 
-#main_link = 'https://api.vk.com/method/users.get'
-#?user_id=210700286&v=5.52
-#https://api.vk.com/method/users.get
-#https://oauth.vk.com/blank.html
-#
-#access_token=a3fed3eec848e1521eda0de817341d85700d20492dcccb96d9fc5ffee9a974753cad67955c5a6e1c9d3f6
-# &expires_in=86400
-# &user_id=155984790
+elem.send_keys('ostapshutenko')
+elem.send_keys(Keys.ENTER)
+elem = driver.find_element_by_name('password')
+elem.send_keys('XFNcsmP7')
+elem.send_keys(Keys.ENTER)
+driver.get('https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox')
+"""
 
+# пришлось яндекс почту использовать, потому что другие почты банет браузер, говорит, что он не безопасен
 
-#id приложения - 7660892
-#sKTyEeniLq6BMpNUIX46
-#075661a6075661a6075661a695072284fa00756075661a658fbcfd9f89357ab4ea20157
+driver.get('https://passport.yandex.ru/auth?from=mail&origin=hostroot_homer_auth_ru&retpath=https%3A%2F%2Fmail.yandex.ru%2F&backpath=https%3A%2F%2Fmail.yandex.ru%3Fnoretpath%3D1')
 
-#link_auth = 'https://oauth.vk.com/authorize'
-#https://oauth.vk.com/authorize?client_id=5490057&display=page&redirect_uri=https://oauth.vk.com/blank.html&scope=friends&response_type=token&v=5.52
-#https://api.vk.com/method/friends.getOnline?v=5.52&access_token=
-#params_auth = {}
+elem = driver.find_elements_by_name('login')
+elem[0].send_keys('ostap.shutenko')
+elem[0].send_keys(Keys.ENTER)
+time.sleep(1)
+elem = driver.find_element_by_id('passp-field-passwd')
+elem.send_keys('')
+elem.send_keys(Keys.ENTER)
+time.sleep(3)
 
-link = 'https://api.vk.com/method/'
-command = 'groups.get'
-command2 = 'groups.getById'
-params = {
-    'user_id':155984790,
-    'v':5.52,
-    'access_token' : 'a3fed3eec848e1521eda0de817341d85700d20492dcccb96d9fc5ffee9a974753cad67955c5a6e1c9d3f6'
-}
+while (True):
+    elem = driver.find_element_by_class_name('b-link_scroll-right')
 
-response = requests.get((link+command), params=params)
-#response = requests.get('https://api.vk.com/method/friends.getOnline?v=5.52&access_token=a3fed3eec848e1521eda0de817341d85700d20492dcccb96d9fc5ffee9a974753cad67955c5a6e1c9d3f6')
-#access_token=a3fed3eec848e1521eda0de817341d85700d20492dcccb96d9fc5ffee9a974753cad67955c5a6e1c9d3f6
-if response.ok:
-    j_son = response.json()
-    s = ''
-    for i in list(j_son["response"]["items"]):
-        s = s + str(i)+','
-    s = s[0:-1]
-    params2 = {
-        'group_ids': s,
-        'v': 5.52,
-        'access_token': 'a3fed3eec848e1521eda0de817341d85700d20492dcccb96d9fc5ffee9a974753cad67955c5a6e1c9d3f6'
-    }
-
-
-    response2 = requests.get((link + command2), params=params2)
-
+    elem = driver.find_elements_by_class_name('mail-MessageSnippet')
+    s = list()
+    for i in elem:
+        s.append(i.get_attribute('href'))
     #print(s)
+    data = {
+        'name':[],
+        'tema':[],
+        'data':[],
+        'text':[]
+    }
+    for i in s:
+        driver.get(i)
+        time.sleep(1)
+        elem = driver.find_element_by_class_name('mail-Message-Sender-Email')
+        data['name'].append(elem.get_attribute('title'))
+        elem = driver.find_element_by_class_name('mail-Message-Toolbar-Subject_message')
+        data['tema'].append(elem.text)
+        elem = driver.find_element_by_class_name('mail-Message-Date')
+        data['data'].append(elem.text)
+        elem = driver.find_element_by_class_name('mail-Message-Body-Content')
+        data['text'].append(elem.text)
+        driver.back()
 
-    if response2.ok:
-        fil_json = open("groups.json",'w')
-        fil_json.write(str(response2.json()['response']))
-        fil_json.close()
-        print(response2.json()['response'])
-    else:
-        print('nono')
-else:
-    print('no')
+        #elem = driver.find_element_by_class_name('b-link_scroll-right')
+        #nextx = elem.get_attribute('href')
+        #if nextx == '':
+        #    break
+        #elem.click()
+print(data)
+"""
+driver.get('https://www.mvideo.ru/?cityId=CityR_41')
+time.sleep(2)
+elem = driver.find_elements_by_class_name('next-btn')
 
-#response.headers
 
-#response.text
-#response.content
+elem = driver.find_elements_by_tag_name('ul')
+j = 0
+for i in elem:
+    print(j)
+    j+=1
+    pprint(i.text)
+
+"""
+
+
+"""
+profile = driver.find_element_by_class_name('avatar')
+driver.get(profile.get_attribute('href'))
+
+edit_profile = driver.find_element_by_class_name('text-sm')
+driver.get(edit_profile.get_attribute('href'))
+
+gender = driver.find_element_by_name('user[gender]')
+select_gender = Select(gender)
+select_gender.select_by_value('1')
+
+gender.submit()
+"""
+#driver.back()
+#driver.forward()
+#driver.refresh()
+
+driver.quit()
