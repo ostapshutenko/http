@@ -16,6 +16,6 @@ if __name__ == '__main__':
     # создаем объект процесса для работы паука
     process = CrawlerProcess(settings=crawler_settings)
     process.crawl(HhruSpider)
-    #process.crawl(SjruSpider)
+    process.crawl(SjruSpider)
 
     process.start()   # Запускаем паука
