@@ -1,9 +1,8 @@
-
 import scrapy
 from scrapy.http import HtmlResponse
 from jobparser.items import JobparserItem
 
-class SjruSpider(scrapy.Spider):
+class SuperJobSpider(scrapy.Spider):
     name = 'sjru'
     allowed_domains = ['superjob.ru']
     start_urls = ['https://www.superjob.ru/vacancy/search/']
@@ -27,7 +26,5 @@ class SjruSpider(scrapy.Spider):
         name = response.xpath("//h1/text()").extract_first()
         salary = response.xpath("//span[contains(@class,'ZON4b')]//text()").extract()
         link = response.url
-        sites = 'sj.ru'
-        yield JobparserItem(item_name=name, item_salary=salary, item_link=link,
-                            item_sites=sites)  # Передаем собранные данные в структуру items
-
+        vacancy_source = self.allowed_domains[0]
+        yield JobparserItem(item_name=name, item_salary=salary, item_link=link, item_source=vacancy_source)
